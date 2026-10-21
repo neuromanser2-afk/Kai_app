@@ -1,0 +1,29 @@
+name: kai_app
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  webview_flutter: ^4.8.0
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  image_picker: ^1.0.7
+  file_picker: ^8.1.2
+  record: ^5.0.4
+  geolocator: ^10.1.0
+  permission_handler: ^11.3.0
+  audioplayers: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/kai.png
+    - assets/bimbo.png
+
+
