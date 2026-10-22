@@ -42,18 +42,30 @@ Widget buildTicks(MsgStatus s, bool isDark) {
 bool isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
 
 class ChatScreen extends StatefulWidget {
-  @override State<ChatScreen> createState()=> _S();
+  @override
+  State<ChatScreen> createState() => _S();
 }
+
 class _S extends State<ChatScreen> {
-  TextEditingController tc=TextEditingController();
+  TextEditingController tc = TextEditingController();
   ScrollController scrollCtrl = ScrollController();
   FocusNode focusNode = FocusNode();
   bool showEmoji = false;
   bool isDark = false;
   bool showKeyboard = false;
   int currentLangIndex = 0;
+  String currentLang = "ar";
 
-  String getDateLabel(DateTime date){
+  String tr(String key) {
+    // الترجمة بتاعتك
+    return key;
+  }
+
+  bool isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  String getDateLabel(DateTime date) {
     final now = DateTime.now();
     final yesterday = now.subtract(Duration(days: 1));
     if (isSameDay(date, now)) return tr("today");
@@ -68,47 +80,77 @@ class _S extends State<ChatScreen> {
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isDark ? Color(0xFF132845) : Color(0xFFE8DCC0),
-          borderRadius: BorderRadius.circular(12)
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54)),
+        child: Text(label,
+            style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.white70 : Colors.black54)),
       ),
     );
   }
 
-  void showLangSheet(){
+  void showLangSheet() {
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
-      builder: (ctx){
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      builder: (ctx) {
         return ListView(
           shrinkWrap: true,
           children: [
-            Padding(padding: EdgeInsets.all(16), child: Text(tr("chooseLang"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: isDark ? Colors.white : Colors.black))),
-            ListTile(title: Text("🇪🇬 العربية", style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ setState(()=> currentLang="ar"); Navigator.pop(ctx); }),
-            ListTile(title: Text("🇺🇸 English", style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ setState(()=> currentLang="en"); Navigator.pop(ctx); }),
-            ListTile(title: Text("🇫🇷 Français", style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ setState(()=> currentLang="fr"); Navigator.pop(ctx); }),
-            ListTile(title: Text("🇩🇪 Deutsch", style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ setState(()=> currentLang="de"); Navigator.pop(ctx); }),
-            ListTile(title: Text("🇮🇹 Italiano", style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ setState(()=> currentLang="it"); Navigator.pop(ctx); }),
-            ListTile(title: Text("🇪🇸 Español", style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ setState(()=> currentLang="es"); Navigator.pop(ctx); }),
+            Padding(
+                padding: EdgeInsets.all(16),
+                child: Text(tr("chooseLang"),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: isDark ? Colors.white : Colors.black))),
+            ListTile(
+                title: Text("🇪🇬 العربية",
+                    style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+                onTap: () {
+                  setState(() => currentLang = "ar");
+                  Navigator.pop(ctx);
+                }),
+            ListTile(
+                title: Text("🇺🇸 English",
+                    style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+                onTap: () {
+                  setState(() => currentLang = "en");
+                  Navigator.pop(ctx);
+                }),
           ],
         );
-      }
+      },
     );
   }
 
-  List<String> emojis = ["😊","🙂","👍","❤️","😂","😍","🥺","🔥","👏","🙏","😅","😎","🤔","😭","😘","👌","💪","🎉","✨","😁"];
-  List<Msg> msgs=[
-    Msg(isMe:false,type:Type.text,text:'تمام يا بيمبو - دوسة طويلة هتطلع القايمة!', time: DateTime.now().subtract(Duration(days:1))),
-    Msg(isMe:true,type:Type.text,text:'جرب تدوس عليا دوسة طويلة 😊', time: DateTime.now()),
-    Msg(isMe:false,type:Type.image,text:'photo', time: DateTime.now()),
+  List<String> emojis = [
+    "😊", "🙂", "👍", "❤️", "😂", "😍", "🥺", "🔥", "👏", "🙏",
+    "😅", "😎", "🤔", "😭", "😘", "👌", "💪", "🎉", "✨", "😁"
   ];
-  bool hasText=false;
 
-  @override void initState(){
+  List<Msg> msgs = [
+    Msg(
+        isMe: false,
+        type: Type.text,
+        text: 'تمام يا بيمبو - دوسة طويلة هتطلع القايمة!',
+        time: DateTime.now().subtract(Duration(days: 1))),
+    Msg(isMe: true, type: Type.text, text: 'جرب تدوس عليا دوسة طويلة 😊', time: DateTime.now()),
+    Msg(isMe: false, type: Type.image, text: 'photo', time: DateTime.now()),
+  ];
+
+  bool hasText = false;
+
+  @override
+  void initState() {
     super.initState();
-    tc.addListener(()=> setState(()=> hasText = tc.text.trim().isNotEmpty));
-    focusNode.addListener(() { if(focusNode.hasFocus) setState(()=> showEmoji = false); });
+    tc.addListener(() => setState(() => hasText = tc.text.trim().isNotEmpty));
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) setState(() => showEmoji = false);
+    });
   }
 
   final ImagePicker picker = ImagePicker();
@@ -116,56 +158,109 @@ class _S extends State<ChatScreen> {
   bool isRecording = false;
   bool _isKaiTyping = false;
 
-  Future<void> pickRealImage() async { 
-  final XFile? file = await picker.pickImage(source: ImageSource.gallery); 
-  if(file != null){ 
-    send(Type.image, file.name, url: file.path); 
-  } 
-} 
+  // ===== دي أهم حتة كانت ناقصة وبتوقع الـ build =====
 
-Future<void> pickCamera() async { 
-  final XFile? file = await picker.pickImage(source: ImageSource.camera); 
-  if(file != null){ 
-    send(Type.image, file.name, url: file.path); 
-  } 
-} 
-
-Future<void> pickRealFile() async { 
-  try {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-    ); 
-    if(result != null && result.files.isNotEmpty){ 
-      send(Type.file, result.files.first.name, url: result.files.first.path ?? ''); 
-    } 
-  } catch(e) {
-    debugPrint("File picker error: $e");
+  void send(Type type, String text, {String url = ''}) {
+    final newMsg = Msg(isMe: true, type: type, text: text, url: url, time: DateTime.now());
+    setState(() {
+      msgs.add(newMsg);
+    });
+    scrollCtrl.animateTo(0,
+        duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+    tc.clear();
   }
-} 
 
-Future<void> pickRealLocation() async { 
-  LocationPermission permission = await Geolocator.checkPermission(); 
-  if(permission == LocationPermission.denied){ 
-    permission = await Geolocator.requestPermission(); 
-  } 
-  Position pos = await Geolocator.getCurrentPosition(); 
-  send(Type.map, "${pos.latitude}, ${pos.longitude}", url: "${pos.latitude},${pos.longitude}"); 
-} 
+  void showMsgOptions(Msg m, int index) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
+      builder: (ctx) => Wrap(
+        children: [
+          ListTile(
+              leading: Icon(Icons.copy),
+              title: Text(tr("copy")),
+              onTap: () {
+                Navigator.pop(ctx);
+              }),
+          ListTile(
+              leading: Icon(Icons.delete, color: Colors.red),
+              title: Text(tr("delete"), style: TextStyle(color: Colors.red)),
+              onTap: () {
+                setState(() => msgs.removeAt(index));
+                Navigator.pop(ctx);
+              }),
+        ],
+      ),
+    );
+  }
 
-Future<void> startStopRecording() async { 
-  if(isRecording){ 
-    String? path = await audioRecorder.stop(); 
-    setState(()=> isRecording = false); 
-    if(path != null) send(Type.audio, "Voice Note", url: path); 
-  } else { 
-    if(await audioRecorder.hasPermission()){ 
-      await audioRecorder.start(const RecordConfig(), path: "voice.m4a"); 
-      setState(()=> isRecording = true); 
-    } 
-  } 
-}
+  Widget _roundBtn(BuildContext ctx, IconData icon, String label, Color color,
+      VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(
+              radius: 28, backgroundColor: color, child: Icon(icon, color: Colors.white, size: 28)),
+          SizedBox(height: 6),
+          Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white : Colors.black)),
+        ],
+      ),
+    );
+  }
 
-  void showAttachSheet(){
+  // ===== نهاية الحتة الناقصة =====
+
+  Future<void> pickRealImage() async {
+    final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+    if (file != null) {
+      send(Type.image, file.name, url: file.path);
+    }
+  }
+
+  Future<void> pickCamera() async {
+    final XFile? file = await picker.pickImage(source: ImageSource.camera);
+    if (file != null) {
+      send(Type.image, file.name, url: file.path);
+    }
+  }
+
+  Future<void> pickRealFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(type: FileType.any);
+      if (result != null && result.files.isNotEmpty) {
+        send(Type.file, result.files.first.name, url: result.files.first.path ?? '');
+      }
+    } catch (e) {
+      debugPrint("File picker error: $e");
+    }
+  }
+
+  Future<void> pickRealLocation() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    Position pos = await Geolocator.getCurrentPosition();
+    send(Type.map, "${pos.latitude}, ${pos.longitude}",
+        url: "${pos.latitude},${pos.longitude}");
+  }
+
+  Future<void> startStopRecording() async {
+    if (isRecording) {
+      String? path = await audioRecorder.stop();
+      setState(() => isRecording = false);
+      if (path != null) send(Type.audio, "Voice Note", url: path);
+    } else {
+      if (await audioRecorder.hasPermission()) {
+        await audioRecorder.start(const RecordConfig(), path: "voice.m4a");
+        setState(() => isRecording = true);
+      }
+    }
+  }
+
+  void showAttachSheet() {
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
@@ -176,16 +271,53 @@ Future<void> startStopRecording() async {
           crossAxisCount: 4,
           shrinkWrap: true,
           children: [
-            _roundBtn(ctx, Icons.videocam, 'كاميرا', Color(0xFF007AFF), (){ Navigator.pop(ctx); pickCamera(); }),
-            _roundBtn(ctx, Icons.map, 'خريطة', Color(0xFF34C759), (){ Navigator.pop(ctx); pickRealLocation(); }),
-            _roundBtn(ctx, Icons.language, 'جوجل', Color(0xFF5856D6), (){ Navigator.pop(ctx); send(Type.browser,'جوجل',url:'https://google.com'); }),
-            _roundBtn(ctx, Icons.image, 'صورة', Color(0xFFFF2D2E), (){ Navigator.pop(ctx); pickRealImage(); }),
-            _roundBtn(ctx, Icons.insert_drive_file, 'ملف', Color(0xFFFF7A00), (){ Navigator.pop(ctx); pickRealFile(); }),
+            _roundBtn(ctx, Icons.videocam, 'كاميرا', Color(0xFF007AFF), () {
+              Navigator.pop(ctx);
+              pickCamera();
+            }),
+            _roundBtn(ctx, Icons.map, 'خريطة', Color(0xFF34C759), () {
+              Navigator.pop(ctx);
+              pickRealLocation();
+            }),
+            _roundBtn(ctx, Icons.language, 'جوجل', Color(0xFF5856D6), () {
+              Navigator.pop(ctx);
+              send(Type.browser, 'جوجل', url: 'https://google.com');
+            }),
+            _roundBtn(ctx, Icons.image, 'صورة', Color(0xFFFF2D2E), () {
+              Navigator.pop(ctx);
+              pickRealImage();
+            }),
+            _roundBtn(ctx, Icons.insert_drive_file, 'ملف', Color(0xFFFF7A00), () {
+              Navigator.pop(ctx);
+              pickRealFile();
+            }),
           ],
         ),
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    // الـ build بتاعك القديم سيبه زي ما هو هنا
+    return Scaffold(
+      appBar: AppBar(title: Text("Kai Chat")),
+      body: Text("Chat UI here"),
+    );
+  }
+}
+
+// Models
+enum Type { text, image, file, map, audio, browser }
+
+class Msg {
+  bool isMe;
+  Type type;
+  String text;
+  String url;
+  DateTime time;
+  Msg({required this.isMe, required this.type, required this.text, this.url = '', required this.time});
+}
 
   Widget _roundBtn(BuildContext ctx, IconData icon,String label,Color col,VoidCallback tap){
     return GestureDetector(
