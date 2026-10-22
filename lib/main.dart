@@ -131,45 +131,39 @@ Future<void> pickCamera() async {
 } 
 
 Future<void> pickRealFile() async { 
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    type: FileType.any,
-  ); 
-  if(result != null && result.files.isNotEmpty){ 
-    send(Type.file, result.files.first.name, url: result.files.first.path ?? ''); 
+  try {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+    ); 
+    if(result != null && result.files.isNotEmpty){ 
+      send(Type.file, result.files.first.name, url: result.files.first.path ?? ''); 
+    } 
+  } catch(e) {
+    debugPrint("File picker error: $e");
+  }
+} 
+
+Future<void> pickRealLocation() async { 
+  LocationPermission permission = await Geolocator.checkPermission(); 
+  if(permission == LocationPermission.denied){ 
+    permission = await Geolocator.requestPermission(); 
+  } 
+  Position pos = await Geolocator.getCurrentPosition(); 
+  send(Type.map, "${pos.latitude}, ${pos.longitude}", url: "${pos.latitude},${pos.longitude}"); 
+} 
+
+Future<void> startStopRecording() async { 
+  if(isRecording){ 
+    String? path = await audioRecorder.stop(); 
+    setState(()=> isRecording = false); 
+    if(path != null) send(Type.audio, "Voice Note", url: path); 
+  } else { 
+    if(await audioRecorder.hasPermission()){ 
+      await audioRecorder.start(const RecordConfig(), path: "voice.m4a"); 
+      setState(()=> isRecording = true); 
+    } 
   } 
 }
-  Future<void> pickRealLocation() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if(permission == LocationPermission.denied){ permission = await Geolocator.requestPermission(); }
-    Position pos = await Geolocator.getCurrentPosition();
-    send(Type.map, "${pos.latitude}, ${pos.longitude}", url: "${pos.latitude},${pos.longitude}");
-  }
-  Future<void> startStopRecording() async {
-    if(isRecording){ String? path = await audioRecorder.stop(); setState(()=> isRecording = false); if(path != null) send(Type.audio, "Voice Note", url: path); }
-    else { if(await audioRecorder.hasPermission()){ await audioRecorder.start(RecordConfig(), path: "voice.m4a"); setState(()=> isRecording = true); } }
-  }
-
-  void send(Type t,String txt,{String url=''}) {
-    var newMsg = Msg(isMe:true,type:t,text:txt,url:url);
-    setState((){ msgs.add(newMsg); _isKaiTyping = true; });
-    Future.delayed(Duration(milliseconds:100), (){ if(scrollCtrl.hasClients){ scrollCtrl.animateTo(scrollCtrl.position.maxScrollExtent, duration: Duration(milliseconds:300), curve: Curves.easeOut); } });
-    Future.delayed(Duration(seconds:1), (){ if(mounted) setState(()=> newMsg.status = MsgStatus.delivered); });
-    Future.delayed(Duration(seconds:2), (){ if(mounted) { setState((){ _isKaiTyping = false; newMsg.status = MsgStatus.read; msgs.add(Msg(isMe:false,type:Type.text,text: "Got: $txt")); }); if(scrollCtrl.hasClients){ scrollCtrl.animateTo(scrollCtrl.position.maxScrollExtent, duration: Duration(milliseconds:300), curve: Curves.easeOut); } } });
-  }
-
-  void showMsgOptions(Msg m, int index){
-    showModalBottomSheet(context: context, backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))), builder: (ctx){
-      return SafeArea(child: Wrap(children: [
-        ListTile(title: Center(child: Text(m.text.length>20? m.text.substring(0,20)+"..." : m.text, style: TextStyle(color: Colors.grey))),),
-        Divider(color: isDark ? Colors.white24 : Colors.black12),
-        if(m.type==Type.text && m.isMe) ListTile(leading: Icon(Icons.edit, color: isDark ? Colors.white : Colors.black), title: Text(tr("edit"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ Navigator.pop(ctx); final ctrl = TextEditingController(text: m.text); showDialog(context: context, builder: (d)=> AlertDialog(backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white, title: Text(tr("editMessage"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), content: TextField(controller: ctrl, style: TextStyle(color: isDark ? Colors.white : Colors.black)), actions: [ TextButton(onPressed: ()=> Navigator.pop(d), child: Text(tr("cancel"))), TextButton(onPressed: (){ setState(()=> m.text = ctrl.text); Navigator.pop(d); }, child: Text(tr("save"))), ])); }),
-        ListTile(leading: Icon(Icons.delete, color: Colors.red), title: Text(tr("delete"), style: TextStyle(color: Colors.red)), onTap: (){ Navigator.pop(ctx); setState(()=> msgs.removeAt(index)); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr("deleted")))); }),
-        ListTile(leading: Icon(Icons.forward, color: Colors.blue), title: Text(tr("forward"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ Navigator.pop(ctx); send(m.type, m.text, url: m.url); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr("forwarded")))); }),
-        if(m.type==Type.image || m.type==Type.file || m.type==Type.video) ListTile(leading: Icon(Icons.save_alt, color: Colors.green), title: Text(tr("save"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ Navigator.pop(ctx); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr("saveGallery")))); }),
-        ListTile(leading: Icon(Icons.copy, color: isDark ? Colors.white70 : Colors.black54), title: Text(tr("copy"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: (){ Navigator.pop(ctx); ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${tr("copied")}: ${m.text}"))); }),
-      ]));
-    });
-  }
 
   void showAttachSheet(){
     showModalBottomSheet(
