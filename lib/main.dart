@@ -15,31 +15,40 @@ String currentLang = "ar";
 Map<String, Map<String, String>> trMap = {
   "ar": {"online":"متصل الآن","today":"اليوم","yesterday":"أمس","message":"رسالة","recording":"تسجيل...","chooseLang":"اختار اللغة","edit":"تعديل","editMessage":"تعديل الرسالة","cancel":"إلغاء","save":"حفظ","delete":"مسح","deleted":"تم المسح","forward":"إعادة توجيه","forwarded":"تمت إعادة التوجيه","saveGallery":"تم الحفظ","copy":"نسخ","copied":"تم النسخ","profile":"البروفايل","photo":"الصور والوسائط","block":"حظر","unblock":"إلغاء الحظر","deleteChat":"مسح الشات","report":"إبلاغ","reportSent":"تم الإبلاغ","comingSoon":"قريباً","editProfile":"تعديل البروفايل","tapToChange":"دوس على الصورة عشان تغيرها","name":"الاسم","tapToEdit":"دوس على الصورة عشان تعدل","map":"الخريطة","phone":"افتح على الموبايل"},
   "en": {"online":"online","today":"Today","yesterday":"Yesterday","message":"Message","recording":"Recording...","chooseLang":"Choose Language","edit":"Edit","editMessage":"Edit Message","cancel":"Cancel","save":"Save","delete":"Delete","deleted":"Deleted","forward":"Forward","forwarded":"Forwarded","saveGallery":"Saved to gallery","copy":"Copy","copied":"Copied","profile":"Profile","photo":"Media & Photos","block":"Block","unblock":"Unblock","deleteChat":"Delete Chat","report":"Report","reportSent":"Report sent","comingSoon":"Coming soon","editProfile":"Edit Profile","tapToChange":"Tap image to change","name":"Name","tapToEdit":"Tap image to edit","map":"Map","phone":"Open on phone"},
-  "fr": {"online":"en ligne","today":"Aujourd'hui","yesterday":"Hier","message":"Message","recording":"Enregistrement...","chooseLang":"Choisir la langue","edit":"Modifier","editMessage":"Modifier le message","cancel":"Annuler","save":"Enregistrer","delete":"Supprimer","deleted":"Supprimé","forward":"Transférer","forwarded":"Transféré","saveGallery":"Enregistré","copy":"Copier","copied":"Copié","profile":"Profil","photo":"Médias","block":"Bloquer","unblock":"Débloquer","deleteChat":"Supprimer chat","report":"Signaler","reportSent":"Signalé","comingSoon":"Bientôt","editProfile":"Modifier profil","tapToChange":"Appuyez pour changer","name":"Nom","tapToEdit":"Appuyez pour modifier","map":"Carte","phone":"Ouvrir sur mobile"},
-  "de": {"online":"online","today":"Heute","yesterday":"Gestern","message":"Nachricht","recording":"Aufnahme...","chooseLang":"Sprache wählen","edit":"Bearbeiten","editMessage":"Nachricht bearbeiten","cancel":"Abbrechen","save":"Speichern","delete":"Löschen","deleted":"Gelöscht","forward":"Weiterleiten","forwarded":"Weitergeleitet","saveGallery":"Gespeichert","copy":"Kopieren","copied":"Kopiert","profile":"Profil","photo":"Medien","block":"Blockieren","unblock":"Entblocken","deleteChat":"Chat löschen","report":"Melden","reportSent":"Gemeldet","comingSoon":"Bald","editProfile":"Profil bearbeiten","tapToChange":"Zum Ändern tippen","name":"Name","tapToEdit":"Zum Bearbeiten tippen","map":"Karte","phone":"Am Handy öffnen"},
-  "it": {"online":"online","today":"Oggi","yesterday":"Ieri","message":"Messaggio","recording":"Registrazione...","chooseLang":"Scegli lingua","edit":"Modifica","editMessage":"Modifica messaggio","cancel":"Annulla","save":"Salva","delete":"Elimina","deleted":"Eliminato","forward":"Inoltra","forwarded":"Inoltrato","saveGallery":"Salvato","copy":"Copia","copied":"Copiato","profile":"Profilo","photo":"Media","block":"Blocca","unblock":"Sblocca","deleteChat":"Elimina chat","report":"Segnala","reportSent":"Segnalato","comingSoon":"Prossimamente","editProfile":"Modifica profilo","tapToChange":"Tocca per cambiare","name":"Nome","tapToEdit":"Tocca per modificare","map":"Mappa","phone":"Apri sul telefono"},
-  "es": {"online":"en linea","today":"Hoy","yesterday":"Ayer","message":"Mensaje","recording":"Grabando...","chooseLang":"Elegir idioma","edit":"Editar","editMessage":"Editar mensaje","cancel":"Cancelar","save":"Guardar","delete":"Eliminar","deleted":"Eliminado","forward":"Reenviar","forwarded":"Reenviado","saveGallery":"Guardado","copy":"Copiar","copied":"Copiado","profile":"Perfil","photo":"Archivos","block":"Bloquear","unblock":"Desbloquear","deleteChat":"Eliminar chat","report":"Reportar","reportSent":"Reportado","comingSoon":"Próximamente","editProfile":"Editar perfil","tapToChange":"Toca para cambiar","name":"Nombre","tapToEdit":"Toca para editar","map":"Mapa","phone":"Abrir en el móvil"},
 };
+
 String tr(String key) => trMap[currentLang]![key] ?? key;
+bool isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
+
 void main() => runApp(KaiApp());
+
 enum Type { text, video, map, browser, image, file, audio }
 enum MsgStatus { sent, delivered, read }
+
 class Msg {
-  bool isMe; Type type; String text; String url; MsgStatus status; DateTime time;
+  bool isMe;
+  Type type;
+  String text;
+  String url;
+  MsgStatus status;
+  DateTime time;
   Msg({required this.isMe, required this.type, required this.text, this.url='', this.status = MsgStatus.sent, DateTime? time}) : time = time?? DateTime.now();
 }
+
 String kaiName = "Kai";
 String kaiImage = 'assets/kai.png';
 Uint8List? pickedImageBytes;
+
 class KaiApp extends StatelessWidget {
-  @override Widget build(BuildContext c) => MaterialApp(debugShowCheckedModeBanner: false, home: ChatScreen());
+  @override
+  Widget build(BuildContext c) => MaterialApp(debugShowCheckedModeBanner: false, home: ChatScreen());
 }
+
 Widget buildTicks(MsgStatus s, bool isDark) {
   if (s == MsgStatus.sent) return Icon(Icons.done, size: 15, color: isDark ? Colors.white70 : Colors.black54);
   if (s == MsgStatus.delivered) return Icon(Icons.done_all, size: 15, color: isDark ? Colors.white70 : Colors.black54);
   return Icon(Icons.done_all, size: 15, color: Color(0xFF53BDEB));
 }
-bool isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -54,18 +63,20 @@ class _S extends State<ChatScreen> {
   bool isDark = false;
   bool showKeyboard = false;
   int currentLangIndex = 0;
-  String currentLang = "ar";
 
-  String tr(String key) {
-    // الترجمة بتاعتك
-    return key;
+  List<String> emojis = ["😊","🙂","👍","❤️","😂","😍","🥺","🔥","👏","🙏","😅","😎","🤔","😭","😘","👌","💪","🎉","✨","😁"];
+  List<Msg> msgs = [
+    Msg(isMe: false, type: Type.text, text: 'تمام يا بيمبو - دوسة طويلة هتطلع القايمة!', time: DateTime.now().subtract(Duration(days: 1))),
+    Msg(isMe: true, type: Type.text, text: 'جرب تدوس عليا دوسة طويلة 😊', time: DateTime.now()),
+    Msg(isMe: false, type: Type.image, text: 'photo', time: DateTime.now()),
+  ];
+
+  List<Msg> get mediaMsgs {
+    List<Msg> allMsgs = msgs;
+    return allMsgs.where((Msg m) => m.type == Type.image || m.type == Type.video || m.type == Type.file).toList();
   }
 
-  bool isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
-  }
-
-  String getDateLabel(DateTime date) {
+  String getDateLabel(DateTime date){
     final now = DateTime.now();
     final yesterday = now.subtract(Duration(days: 1));
     if (isSameDay(date, now)) return tr("today");
@@ -73,7 +84,7 @@ class _S extends State<ChatScreen> {
     return "${date.day}/${date.month}/${date.year}";
   }
 
-  Widget dateChip2(String label) {
+  Widget dateChip2(String label){
     return Center(
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 12),
@@ -82,375 +93,225 @@ class _S extends State<ChatScreen> {
           color: isDark ? Color(0xFF132845) : Color(0xFFE8DCC0),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Text(label,
-            style: TextStyle(
-                fontSize: 12,
-                color: isDark ? Colors.white70 : Colors.black54)),
+        child: Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54)),
       ),
     );
   }
 
-  void showLangSheet() {
+  void showLangSheet(){
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
       builder: (ctx) {
         return ListView(
           shrinkWrap: true,
           children: [
-            Padding(
-                padding: EdgeInsets.all(16),
-                child: Text(tr("chooseLang"),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: isDark ? Colors.white : Colors.black))),
-            ListTile(
-                title: Text("🇪🇬 العربية",
-                    style: TextStyle(color: isDark ? Colors.white : Colors.black)),
-                onTap: () {
-                  setState(() => currentLang = "ar");
-                  Navigator.pop(ctx);
-                }),
-            ListTile(
-                title: Text("🇺🇸 English",
-                    style: TextStyle(color: isDark ? Colors.white : Colors.black)),
-                onTap: () {
-                  setState(() => currentLang = "en");
-                  Navigator.pop(ctx);
-                }),
+            Padding(padding: EdgeInsets.all(16), child: Text(tr("chooseLang"), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: isDark ? Colors.white : Colors.black))),
+            ListTile(title: Text("🇪🇬 العربية"), onTap: () { setState(() => currentLang = "ar"); Navigator.pop(ctx); }),
+            ListTile(title: Text("🇺🇸 English"), onTap: () { setState(() => currentLang = "en"); Navigator.pop(ctx); }),
           ],
         );
       },
     );
   }
-
-  List<String> emojis = [
-    "😊", "🙂", "👍", "❤️", "😂", "😍", "🥺", "🔥", "👏", "🙏",
-    "😅", "😎", "🤔", "😭", "😘", "👌", "💪", "🎉", "✨", "😁"
-  ];
-
-  List<Msg> msgs = [
-    Msg(
-        isMe: false,
-        type: Type.text,
-        text: 'تمام يا بيمبو - دوسة طويلة هتطلع القايمة!',
-        time: DateTime.now().subtract(Duration(days: 1))),
-    Msg(isMe: true, type: Type.text, text: 'جرب تدوس عليا دوسة طويلة 😊', time: DateTime.now()),
-    Msg(isMe: false, type: Type.image, text: 'photo', time: DateTime.now()),
-  ];
-
-  bool hasText = false;
-
-  @override
-  void initState() {
-    super.initState();
-    tc.addListener(() => setState(() => hasText = tc.text.trim().isNotEmpty));
-    focusNode.addListener(() {
-      if (focusNode.hasFocus) setState(() => showEmoji = false);
-    });
-  }
-
-  final ImagePicker picker = ImagePicker();
-  final AudioRecorder audioRecorder = AudioRecorder();
-  bool isRecording = false;
-  bool _isKaiTyping = false;
-
-  // ===== دي أهم حتة كانت ناقصة وبتوقع الـ build =====
-
-  void send(Type type, String text, {String url = ''}) {
-    final newMsg = Msg(isMe: true, type: type, text: text, url: url, time: DateTime.now());
-    setState(() {
-      msgs.add(newMsg);
-    });
-    scrollCtrl.animateTo(0,
-        duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-    tc.clear();
-  }
-
-  void showMsgOptions(Msg m, int index) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
-      builder: (ctx) => Wrap(
+  
+ void showAttachSheet() {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+    builder: (ctx) => Padding(
+      padding: EdgeInsets.all(16),
+      child: GridView.count(
+        crossAxisCount: 4,
+        shrinkWrap: true,
         children: [
-          ListTile(
-              leading: Icon(Icons.copy),
-              title: Text(tr("copy")),
-              onTap: () {
-                Navigator.pop(ctx);
-              }),
-          ListTile(
-              leading: Icon(Icons.delete, color: Colors.red),
-              title: Text(tr("delete"), style: TextStyle(color: Colors.red)),
-              onTap: () {
-                setState(() => msgs.removeAt(index));
-                Navigator.pop(ctx);
-              }),
+          _roundBtn(ctx, Icons.videocam, 'كاميرا', Color(0xFF007AFF), () { Navigator.pop(ctx); pickCamera(); }),
+          _roundBtn(ctx, Icons.map, 'خريطة', Color(0xFF34C759), () { Navigator.pop(ctx); pickRealLocation(); }),
+          _roundBtn(ctx, Icons.language, 'جوجل', Color(0xFF5856D6), () { Navigator.pop(ctx); send(Type.browser, 'جوجل', url: 'https://google.com'); }),
+          _roundBtn(ctx, Icons.image, 'صورة', Color(0xFFFF2D2E), () { Navigator.pop(ctx); pickRealImage(); }),
+          _roundBtn(ctx, Icons.insert_drive_file, 'ملف', Color(0xFFFF7A00), () { Navigator.pop(ctx); pickRealFile(); }),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _roundBtn(BuildContext ctx, IconData icon, String label, Color color,
-      VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-              radius: 28, backgroundColor: color, child: Icon(icon, color: Colors.white, size: 28)),
-          SizedBox(height: 6),
-          Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white : Colors.black)),
-        ],
+Widget _roundBtn(BuildContext ctx, IconData icon, String label, Color col, VoidCallback tap) {
+  return InkWell(
+    onTap: tap,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        CircleAvatar(radius: 28, backgroundColor: col, child: Icon(icon, color: Colors.white, size: 26)),
+        SizedBox(height: 8),
+        Text(label, style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontSize: 12))
+      ],
+    ),
+  );
+}
+
+Widget buildEmojiPicker() {
+  return Container(
+    height: 250,
+    color: isDark ? Color(0xFF0A1F3A) : Color(0xFFF5E6C8),
+    child: GridView.builder(
+      padding: EdgeInsets.all(8),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
+      itemCount: emojis.length,
+      itemBuilder: (_, i) => GestureDetector(
+        onTap: () { setState(() => tc.text += emojis[i]); },
+        child: Center(child: Text(emojis[i], style: TextStyle(fontSize: 26))),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  // ===== نهاية الحتة الناقصة =====
-
-  Future<void> pickRealImage() async {
-    final XFile? file = await picker.pickImage(source: ImageSource.gallery);
-    if (file != null) {
-      send(Type.image, file.name, url: file.path);
-    }
-  }
-
-  Future<void> pickCamera() async {
-    final XFile? file = await picker.pickImage(source: ImageSource.camera);
-    if (file != null) {
-      send(Type.image, file.name, url: file.path);
-    }
-  }
-
-  Future<void> pickRealFile() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.any);
-      if (result != null && result.files.isNotEmpty) {
-        send(Type.file, result.files.first.name, url: result.files.first.path ?? '');
-      }
-    } catch (e) {
-      debugPrint("File picker error: $e");
-    }
-  }
-
-  Future<void> pickRealLocation() async {
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-    Position pos = await Geolocator.getCurrentPosition();
-    send(Type.map, "${pos.latitude}, ${pos.longitude}",
-        url: "${pos.latitude},${pos.longitude}");
-  }
-
-  Future<void> startStopRecording() async {
-    if (isRecording) {
-      String? path = await audioRecorder.stop();
-      setState(() => isRecording = false);
-      if (path != null) send(Type.audio, "Voice Note", url: path);
+Widget bubble(Msg m, int index) {
+  Widget content;
+  if (m.type == Type.map) {
+    if (kIsWeb) {
+      content = Container(height: 200, width: 260, color: Colors.grey[300], child: Center(child: Text(tr("map"))));
     } else {
-      if (await audioRecorder.hasPermission()) {
-        await audioRecorder.start(const RecordConfig(), path: "voice.m4a");
-        setState(() => isRecording = true);
-      }
-    }
-  }
-
-  void showAttachSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.all(16),
-        child: GridView.count(
-          crossAxisCount: 4,
-          shrinkWrap: true,
-          children: [
-            _roundBtn(ctx, Icons.videocam, 'كاميرا', Color(0xFF007AFF), () {
-              Navigator.pop(ctx);
-              pickCamera();
-            }),
-            _roundBtn(ctx, Icons.map, 'خريطة', Color(0xFF34C759), () {
-              Navigator.pop(ctx);
-              pickRealLocation();
-            }),
-            _roundBtn(ctx, Icons.language, 'جوجل', Color(0xFF5856D6), () {
-              Navigator.pop(ctx);
-              send(Type.browser, 'جوجل', url: 'https://google.com');
-            }),
-            _roundBtn(ctx, Icons.image, 'صورة', Color(0xFFFF2D2E), () {
-              Navigator.pop(ctx);
-              pickRealImage();
-            }),
-            _roundBtn(ctx, Icons.insert_drive_file, 'ملف', Color(0xFFFF7A00), () {
-              Navigator.pop(ctx);
-              pickRealFile();
-            }),
-          ],
+      content = SizedBox(
+        height: 200, width: 260,
+        child: FlutterMap(
+          options: MapOptions(initialCenter: LatLng(31.265, 32.301), initialZoom: 14),
+          children: [TileLayer(urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png')],
         ),
-      ),
-    );
+      );
+    }
+  } else if (m.type == Type.browser || m.type == Type.video) {
+    if (kIsWeb) {
+      content = Container(height: 250, width: 260, color: Colors.black12, child: Center(child: Text(tr("phone"))));
+    } else {
+      content = SizedBox(height: 250, width: 260, child: WebViewWidget(controller: WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted)..loadRequest(Uri.parse(m.url))));
+    }
+  } else if (m.type == Type.audio) {
+    content = Container(width: 240, padding: EdgeInsets.all(12), child: Text('🎤 0:12 Recording', style: TextStyle(color: isDark ? Colors.white : Color(0xFF1E1E1E))));
+  } else if (m.type == Type.image) {
+    if (m.url.isNotEmpty && !kIsWeb && File(m.url).existsSync()) {
+      content = ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.file(File(m.url), height: 160, width: 240, fit: BoxFit.cover));
+    } else {
+      content = Container(height: 160, width: 240, color: Colors.grey, child: Icon(Icons.image, size: 50, color: Colors.white));
+    }
+  } else if (m.type == Type.file) {
+    content = Container(width: 240, padding: EdgeInsets.all(10), child: Row(children: [Icon(Icons.insert_drive_file, color: isDark ? Colors.white : Color(0xFF1E1E1E)), SizedBox(width: 6), Expanded(child: Text(m.text, style: TextStyle(color: isDark ? Colors.white : Color(0xFF1E1E1E))))]));
+  } else {
+    content = Padding(padding: EdgeInsets.all(14), child: Text(m.text, style: TextStyle(color: m.isMe ? (isDark ? Color(0xFF0A1F3A) : Colors.white) : (isDark ? Colors.white : Color(0xFF0A1F3A)), fontSize: 14)));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // الـ build بتاعك القديم سيبه زي ما هو هنا
-    return Scaffold(
-      appBar: AppBar(title: Text("Kai Chat")),
-      body: Text("Chat UI here"),
-    );
+  Color col;
+  if (isDark) {
+    col = m.isMe ? Color(0xFFF5E6C8) : Color(0xFF132845);
+  } else {
+    col = m.isMe ? Color(0xFF0A1F3A) : Color(0xFFFFFFFF);
   }
-}
 
-// Models
-enum Type { text, image, file, map, audio, browser }
+  Widget avatarKai = Stack(children: [
+    CircleAvatar(radius: 18, backgroundImage: pickedImageBytes != null ? MemoryImage(pickedImageBytes!) : AssetImage(kaiImage) as ImageProvider),
+    Positioned(bottom: 0, right: 0, child: Container(width: 10, height: 10, decoration: BoxDecoration(color: Color(0xFF8BC34A), shape: BoxShape.circle, border: Border.all(color: isDark ? Color(0xFF0A1F3A) : Colors.white, width: 1.5))))
+  ]);
 
-class Msg {
-  bool isMe;
-  Type type;
-  String text;
-  String url;
-  DateTime time;
-  Msg({required this.isMe, required this.type, required this.text, this.url = '', required this.time});
-}
+  Widget avatarMe = Stack(children: [
+    CircleAvatar(radius: 18, backgroundImage: AssetImage('assets/bimbo.png')),
+    Positioned(bottom: 0, right: 0, child: Container(width: 10, height: 10, decoration: BoxDecoration(color: Color(0xFF8BC34A), shape: BoxShape.circle, border: Border.all(color: isDark ? Color(0xFF0A1F3A) : Colors.white, width: 1.5))))
+  ]);
 
-  Widget _roundBtn(BuildContext ctx, IconData icon,String label,Color col,VoidCallback tap){
-    return GestureDetector(
-      onTap: (){ Navigator.pop(ctx); tap(); },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+  Widget msgBox = Container(
+    constraints: BoxConstraints(maxWidth: 260),
+    decoration: BoxDecoration(color: col, borderRadius: BorderRadius.circular(16), boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 2)]),
+    child: Stack(children: [
+      Padding(padding: EdgeInsets.fromLTRB(8, 8, 8, 22), child: content),
+      Positioned(bottom: 4, right: 8, child: Row(children: [ Text("${m.time.hour}:${m.time.minute.toString().padLeft(2,'0')}", style: TextStyle(fontSize: 10, color: isDark ? Colors.white70 : Colors.black54)), SizedBox(width: 4), if(m.isMe) buildTicks(m.status, isDark), ]))
+    ]),
+  );
+
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical:4,horizontal:10),
+    child: GestureDetector(
+      onLongPress: ()=> showMsgOptions(m, index),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: m.isMe? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          CircleAvatar(radius:28, backgroundColor:col, child:Icon(icon,color:Colors.white,size:26)),
-          SizedBox(height:8),
-          Text(label,style:TextStyle(color:isDark ? Colors.white70 : Colors.black54,fontSize:12))
-        ]
-      )
-    );
-  }
-
-  Widget buildEmojiPicker(){
-    return Container(height: 250, color: isDark ? Color(0xFF0A1F3A) : Color(0xFFF5E6C8), child: GridView.builder(padding: EdgeInsets.all(8), gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7), itemCount: emojis.length, itemBuilder: (_, i) => GestureDetector(onTap: (){ setState(()=> tc.text += emojis[i]); }, child: Center(child: Text(emojis[i], style: TextStyle(fontSize: 26))))));
-  }
-
-  Widget bubble(Msg m, int index){
-    Widget content;
-    if(m.type==Type.map){
-      if(kIsWeb){ content = Container(height:200,width:260,color:Colors.grey[300],child:Center(child:Text(tr("map")))); }
-      else { content = SizedBox(height:200,width:260, child: FlutterMap(options: MapOptions(initialCenter: LatLng(31.265,32.301), initialZoom:14), children:[TileLayer(urlTemplate:'https://tile.openstreetmap.org/{z}/{x}/{y}.png')])); }
-    } else if(m.type==Type.browser || m.type==Type.video){
-      if(kIsWeb){ content = Container(height:250,width:260,color:Colors.black12,child:Center(child:Text(tr("phone")))); }
-      else { content = SizedBox(height:250,width:260, child: WebViewWidget(controller: WebViewController()..setJavaScriptMode(JavaScriptMode.unrestricted)..loadRequest(Uri.parse(m.url)))); }
-    } else if(m.type==Type.audio) {
-      content=Container(width:240,padding:EdgeInsets.all(12),child:Text('🎤 0:12 Recording', style: TextStyle(color: isDark ? Colors.white : Color(0xFF1E1E1E))));
-    } else if(m.type==Type.image) {
-      if(m.url.isNotEmpty && !kIsWeb && File(m.url).existsSync()){ content=ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.file(File(m.url), height:160,width:240,fit:BoxFit.cover)); }
-      else { content=Container(height:160,width:240,color:Colors.grey,child:Icon(Icons.image,size:50,color:Colors.white)); }
-    } else if(m.type==Type.file) {
-      content=Container(width:240,padding:EdgeInsets.all(10),child:Row(children:[Icon(Icons.insert_drive_file, color: isDark ? Colors.white : Color(0xFF1E1E1E)), SizedBox(width:6), Expanded(child: Text(m.text, style: TextStyle(color: isDark ? Colors.white : Color(0xFF1E1E1E))))]));
-    } else {
-      content=Padding(padding:EdgeInsets.all(14),child:Text(m.text, style: TextStyle(color: m.isMe ? (isDark ? Color(0xFF0A1F3A) : Colors.white) : (isDark ? Colors.white : Color(0xFF0A1F3A)), fontSize: 14)));
-    }
-
-    Color col;
-    if (isDark) {
-      col = m.isMe ? Color(0xFFF5E6C8) : Color(0xFF132845);
-    } else {
-      col = m.isMe ? Color(0xFF0A1F3A) : Color(0xFFFFFFFF);
-    }
-
-    Widget avatarKai = Stack(children: [
-      CircleAvatar(radius: 18, backgroundImage: pickedImageBytes!= null? MemoryImage(pickedImageBytes!) : AssetImage(kaiImage) as ImageProvider),
-      Positioned(bottom: 0, right: 0, child: Container(width: 10, height: 10, decoration: BoxDecoration(color: Color(0xFF8BC34A), shape: BoxShape.circle, border: Border.all(color: isDark ? Color(0xFF0A1F3A) : Colors.white, width: 1.5))))
-    ]);
-    Widget avatarMe = Stack(children: [
-      CircleAvatar(radius: 18, backgroundImage: AssetImage('assets/bimbo.png')),
-      Positioned(bottom: 0, right: 0, child: Container(width: 10, height: 10, decoration: BoxDecoration(color: Color(0xFF8BC34A), shape: BoxShape.circle, border: Border.all(color: isDark ? Color(0xFF0A1F3A) : Colors.white, width: 1.5))))
-    ]);
-
-    Widget msgBox = Container(
-      constraints: BoxConstraints(maxWidth: 260),
-      decoration: BoxDecoration(color: col, borderRadius: BorderRadius.circular(16), boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 2)]),
-      child: Stack(children: [
-        Padding(padding: EdgeInsets.fromLTRB(8, 8, 8, 22), child: content),
-        Positioned(bottom: 4, right: 8, child: Row(children: [
-          Text("${m.time.hour}:${m.time.minute.toString().padLeft(2,'0')}", style: TextStyle(fontSize: 10, color: isDark ? Colors.white70 : Colors.black54)),
-          SizedBox(width: 4),
-          if(m.isMe) buildTicks(m.status, isDark),
-        ]))
-      ])
-    );
-    return Padding(padding: EdgeInsets.symmetric(vertical:4,horizontal:10), child: GestureDetector(onLongPress: ()=> showMsgOptions(m, index), child: Row(crossAxisAlignment: CrossAxisAlignment.end, mainAxisAlignment: m.isMe? MainAxisAlignment.end : MainAxisAlignment.start, children: [ if(!m.isMe) avatarKai, if(!m.isMe) SizedBox(width: 6), Flexible(child: msgBox), if(m.isMe) SizedBox(width: 6), if(m.isMe) avatarMe, ])));
-  }
-
-  @override Widget build(BuildContext c){
-    return Scaffold(
-      backgroundColor: isDark ? Color(0xFF0A1F3A) : Color(0xFFF5E6C8),
-      appBar: AppBar(
-        backgroundColor: Color(0xFF0A1F3A),
-        elevation: isDark ? 0 : 0.5,
-        title: Row(children: [
-          GestureDetector(onTap: () async { final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => KaiProfilePage(allMsgs: msgs, isDarkMode: isDark))); if (result == true) { setState(() { msgs.clear(); }); } },
-            child: Stack(children: [
-              CircleAvatar(radius: 20, backgroundImage: pickedImageBytes != null ? MemoryImage(pickedImageBytes!) : AssetImage(kaiImage) as ImageProvider),
-              Positioned(bottom: 0, right: 0, child: Container(width: 12, height: 12, decoration: BoxDecoration(color: Color(0xFF8BC34A), shape: BoxShape.circle, border: Border.all(color: Color(0xFF0A1F3A), width: 2))))
-            ])),
-          SizedBox(width: 10),
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(kaiName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)),
-            Text(tr("online"), style: TextStyle(fontSize: 12, color: Colors.white70)),
-          ]),
-        ]),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: GestureDetector(
-              onTap: () => setState(() => isDark = !isDark),
-              child: Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: isDark ? Color(0xFFF5E6C8) : Colors.white,
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-          ),
-          IconButton(icon: Icon(Icons.language, color: Colors.white), onPressed: showLangSheet),
+          if(!m.isMe) avatarKai,
+          if(!m.isMe) SizedBox(width: 6),
+          Flexible(child: msgBox),
+          if(m.isMe) SizedBox(width: 6),
+          if(m.isMe) avatarMe,
         ],
       ),
-      body: Column(children: [
-        Expanded(child: ListView.builder(controller: scrollCtrl, itemCount: msgs.length, itemBuilder: (_, i) { bool showDate = true; if (i > 0) { showDate = !isSameDay(msgs[i].time, msgs[i-1].time); } return Column(children: [ if (showDate) dateChip2(getDateLabel(msgs[i].time)), bubble(msgs[i], i), ]); }, ), ),
-        if (_isKaiTyping) Align(alignment: Alignment.centerLeft, child: Padding(padding: const EdgeInsets.fromLTRB(12, 0, 12, 6), child: Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), decoration: BoxDecoration(color: isDark ? Color(0xFFF5E6C8) : Colors.white, borderRadius: BorderRadius.circular(16)), child: Row(mainAxisSize: MainAxisSize.min, children: [ CircleAvatar(radius: 10, backgroundImage: pickedImageBytes != null ? MemoryImage(pickedImageBytes!) : AssetImage(kaiImage) as ImageProvider), SizedBox(width: 8), Text("Kai is typing...", style: TextStyle(fontSize: 13, fontStyle: FontStyle.italic, color: Colors.black54)), ])))),
-        Container(color: isDark ? Color(0xFF0A1F3A) : Colors.white, padding: EdgeInsets.all(6), child: Row(children:[
-          Expanded(child: Container(padding: EdgeInsets.symmetric(horizontal:8), decoration: BoxDecoration(color: isDark ? Color(0xFF132845) : Color(0xFFFFF8EC), borderRadius:BorderRadius.circular(24), border: Border.all(color: isDark ? Colors.transparent : Colors.grey.shade300)), child: Row(children: [
-            GestureDetector(onTap:(){ setState(()=> showEmoji = !showEmoji); if(showEmoji) focusNode.unfocus(); else focusNode.requestFocus(); }, child: Icon(showEmoji? Icons.keyboard : Icons.emoji_emotions_outlined, color: isDark ? Colors.white70 : Colors.grey[600])),
-            SizedBox(width:6),
-            GestureDetector(onTap:showAttachSheet, child: Icon(Icons.attach_file, color: isDark ? Colors.white70 : Colors.grey[600])),
-            SizedBox(width:8),
-            Expanded(child:TextField(controller:tc, focusNode: focusNode, style: TextStyle(color: isDark ? Colors.white : Colors.black), onTap: (){ setState(()=> showKeyboard=false); }, decoration:InputDecoration(hintText: tr("message"), hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.grey), border:InputBorder.none))),
-            GestureDetector(onTap: ()=> setState(()=> showKeyboard = !showKeyboard), child: Icon(showKeyboard? Icons.keyboard_hide : Icons.language, color: isDark ? Colors.white70 : Colors.grey[600])),
-          ]))),
-          SizedBox(width:6),
-          GestureDetector(onLongPress: startStopRecording, onTap: (){ if(hasText){ send(Type.text,tc.text); tc.clear(); } else { startStopRecording(); } }, child: CircleAvatar(backgroundColor: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A), child: Icon(isRecording ? Icons.stop : (hasText? Icons.send : Icons.mic), color: isDark ? Color(0xFF0A1F3A) : Colors.white))),
-        ])),
-        if(showEmoji) buildEmojiPicker(),
-        if(showKeyboard) MultiLanguageKeyboard(controller: tc, currentLang: currentLangIndex, onChangeLang: (i)=> setState(()=> currentLangIndex=i), onHide: ()=> setState(()=> showKeyboard=false), onSend: (){ send(Type.text,tc.text); tc.clear(); }, isDark: isDark),
-      ]),
-    );
-  }
+    ),
+  );
 }
 
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: isDark ? Color(0xFF0A1F3A) : Color(0xFFF5E6C8),
+    appBar: AppBar(
+      backgroundColor: Color(0xFF0A1F3A),
+      elevation: isDark ? 0 : 0.5,
+      title: Row(children: [
+        GestureDetector(
+          onTap: () async {
+            final result = await Navigator.push(context, MaterialPageRoute(builder: (_) => KaiProfilePage(allMsgs: msgs, isDarkMode: isDark)));
+            if (result == true) { setState(() { msgs.clear(); }); }
+          },
+          child: Stack(children: [
+            CircleAvatar(radius: 20, backgroundImage: pickedImageBytes != null ? MemoryImage(pickedImageBytes!) : AssetImage(kaiImage) as ImageProvider),
+            Positioned(bottom: 0, right: 0, child: Container(width: 12, height: 12, decoration: BoxDecoration(color: Color(0xFF8BC34A), shape: BoxShape.circle, border: Border.all(color: Color(0xFF0A1F3A), width: 2))))
+          ]),
+        ),
+        SizedBox(width: 10),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [ Text(kaiName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white)), Text(tr("online"), style: TextStyle(fontSize: 12, color: Colors.white70)), ]),
+      ]),
+      actions: [
+        Padding(padding: EdgeInsets.only(right: 12), child: GestureDetector(onTap: () => setState(() => isDark = !isDark), child: Container(width: 28, height: 28, decoration: BoxDecoration(color: isDark ? Color(0xFFF5E6C8) : Colors.white, shape: BoxShape.circle)))),
+        IconButton(icon: Icon(Icons.language, color: Colors.white), onPressed: showLangSheet),
+      ],
+    ),
+    body: Column(children: [
+      Expanded(child: ListView.builder(controller: scrollCtrl, itemCount: msgs.length, itemBuilder: (_, i) { bool showDate = true; if (i > 0) { showDate = !isSameDay(msgs[i].time, msgs[i-1].time); } return Column(children: [ if (showDate) dateChip2(getDateLabel(msgs[i].time)), bubble(msgs[i], i), ]); }, ), ),
+      if (_isKaiTyping) Align(alignment: Alignment.centerLeft, child: Padding(padding: const EdgeInsets.fromLTRB(12, 0, 12, 6), child: Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8), decoration: BoxDecoration(color: isDark ? Color(0xFFF5E6C8) : Colors.white, borderRadius: BorderRadius.circular(16)), child: Row(mainAxisSize: MainAxisSize.min, children: [ CircleAvatar(radius: 10, backgroundImage: pickedImageBytes != null ? MemoryImage(pickedImageBytes!) : AssetImage(kaiImage) as ImageProvider), SizedBox(width: 8), Text("Kai is typing...", style: TextStyle(fontSize: 13, fontStyle: FontStyle.italic, color: Colors.black54)), ])))),
+      Container(color: isDark ? Color(0xFF0A1F3A) : Colors.white, padding: EdgeInsets.all(6), child: Row(children:[ Expanded(child: Container(padding: EdgeInsets.symmetric(horizontal:8), decoration: BoxDecoration(color: isDark ? Color(0xFF132845) : Color(0xFFFFF8EC), borderRadius:BorderRadius.circular(24), border: Border.all(color: isDark ? Colors.transparent : Colors.grey.shade300)), child: Row(children: [ GestureDetector(onTap:(){ setState(()=> showEmoji = !showEmoji); if(showEmoji) focusNode.unfocus(); else focusNode.requestFocus(); }, child: Icon(showEmoji? Icons.keyboard : Icons.emoji_emotions_outlined, color: isDark ? Colors.white70 : Colors.grey[600])), SizedBox(width:6), GestureDetector(onTap:showAttachSheet, child: Icon(Icons.attach_file, color: isDark ? Colors.white70 : Colors.grey[600])), SizedBox(width:8), Expanded(child:TextField(controller:tc, focusNode: focusNode, style: TextStyle(color: isDark ? Colors.white : Colors.black), onTap: (){ setState(()=> showKeyboard=false); }, decoration:InputDecoration(hintText: tr("message"), hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.grey), border:InputBorder.none))), GestureDetector(onTap: ()=> setState(()=> showKeyboard = !showKeyboard), child: Icon(showKeyboard? Icons.keyboard_hide : Icons.language, color: isDark ? Colors.white70 : Colors.grey[600])), ]))), SizedBox(width:6), GestureDetector(onLongPress: startStopRecording, onTap: (){ if(hasText){ send(Type.text,tc.text); tc.clear(); } else { startStopRecording(); } }, child: CircleAvatar(backgroundColor: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A), child: Icon(isRecording ? Icons.stop : (hasText? Icons.send : Icons.mic), color: isDark ? Color(0xFF0A1F3A) : Colors.white))), ])),
+      if(showEmoji) buildEmojiPicker(),
+      if(showKeyboard) MultiLanguageKeyboard(controller: tc, currentLang: currentLangIndex, onChangeLang: (i)=> setState(()=> currentLangIndex=i), onHide: ()=> setState(()=> showKeyboard=false), onSend: (){ send(Type.text,tc.text); tc.clear(); }, isDark: isDark),
+    ]),
+  );
+}
+
+  // ===== باقي الكلاسات - سيبهم زي ما هما - بره كلاس _S =====
 class MediaGalleryPage extends StatelessWidget {
   final List<Msg> allMsgs;
   MediaGalleryPage({required this.allMsgs});
-  @override Widget build(BuildContext context) {
-    List<Msg> mediaMsgs = allMsgs.where((m) => m.type == Type.image || m.type == Type.video || m.type == Type.file).toList();
-    return Scaffold(backgroundColor: Color(0xFF0A1F3A), appBar: AppBar(backgroundColor: Color(0xFF0A1F3A), title: Text(tr("photo"), style: TextStyle(color: Colors.white))), body: mediaMsgs.isEmpty ? Center(child: Text(tr("comingSoon"), style: TextStyle(color: Colors.white70))) : GridView.builder(padding: EdgeInsets.all(8), gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 4, mainAxisSpacing: 4), itemCount: mediaMsgs.length, itemBuilder: (_, i){ var m = mediaMsgs[i]; if(m.type == Type.image) return Container(color: Colors.grey[300], child: Icon(Icons.image, size: 40, color: Colors.white)); if(m.type == Type.video) return Container(color: Colors.black87, child: Icon(Icons.videocam, size: 40, color: Colors.white)); return Container(color: Color(0xFFF5E6C8), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.insert_drive_file, color: Colors.orange), Text(m.text, style: TextStyle(fontSize: 10))])); }));
+  @override
+  Widget build(BuildContext context) {
+    List<Msg> mediaMsgs = allMsgs
+        .where((Msg m) => m.type == Type.image || m.type == Type.video || m.type == Type.file)
+        .toList();
+    return Scaffold(
+      backgroundColor: Color(0xFF0A1F3A),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF0A1F3A),
+        title: Text(tr("photo"), style: TextStyle(color: Colors.white)),
+      ),
+      body: mediaMsgs.isEmpty
+          ? Center(child: Text(tr("comingSoon"), style: TextStyle(color: Colors.white70)))
+          : GridView.builder(
+              padding: EdgeInsets.all(8),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 4, mainAxisSpacing: 4),
+              itemCount: mediaMsgs.length,
+              itemBuilder: (_, i) {
+                var m = mediaMsgs[i];
+                if (m.type == Type.image) return Container(color: Colors.grey[300], child: Icon(Icons.image, size: 40, color: Colors.white));
+                if (m.type == Type.video) return Container(color: Colors.black87, child: Icon(Icons.videocam, size: 40, color: Colors.white));
+                return Container(color: Color(0xFFF5E6C8), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.insert_drive_file, color: Colors.orange), Text(m.text, style: TextStyle(fontSize: 10))]));
+              },
+            ),
+    );
   }
 }
 
@@ -461,30 +322,175 @@ class MultiLanguageKeyboard extends StatelessWidget {
   final int currentLang;
   final Function(int) onChangeLang;
   final bool isDark;
-  MultiLanguageKeyboard({ required this.controller, required this.onHide, required this.onSend, required this.currentLang, required this.onChangeLang, required this.isDark});
+  MultiLanguageKeyboard(
+      {required this.controller,
+      required this.onHide,
+      required this.onSend,
+      required this.currentLang,
+      required this.onChangeLang,
+      required this.isDark});
+
   final List<Map<String, dynamic>> languages = [
-    { "name": "English", "keys": ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','z','x','c','v','b','n','m'] },
-    { "name": "العربية", "keys": ['ض','ص','ث','ق','ف','غ','ع','ه','خ','ح','ش','س','ي','ب','ل','ا','ت','ن','م','ك','ط','ئ','ء','ؤ','ر','ى','ة','و','ظ','د','ذ'] },
-    { "name": "Français", "keys": ['a','z','e','r','t','y','u','i','o','p','q','s','d','f','g','h','j','k','l','m','w','x','c','v','b','n','é','è','à','ç'] },
-    { "name": "Deutsch", "keys": ['q','w','e','r','t','z','u','i','o','p','ü','a','s','d','f','g','h','j','k','l','ö','ä','y','x','c','v','b','n','m','ß'] },
-    { "name": "Español", "keys": ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','ñ','z','x','c','v','b','n','m','á','é','í'] },
-    { "name": "Italiano", "keys": ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l','ò','à','z','x','c','v','b','n','m','è','é','ì'] },
+    {
+      "name": "English",
+      "keys": [
+        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd', 'f',
+        'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm'
+      ]
+    },
+    {
+      "name": "العربية",
+      "keys": [
+        'ض', 'ص', 'ث', 'ق', 'ف', 'غ', 'ع', 'ه', 'خ', 'ح', 'ش', 'س', 'ي',
+        'ب', 'ل', 'ا', 'ت', 'ن', 'م', 'ك', 'ط', 'ئ', 'ء', 'ؤ', 'ر', 'ى',
+        'ة', 'و', 'ظ', 'د', 'ذ'
+      ]
+    },
+    {
+      "name": "Français",
+      "keys": [
+        'a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'q', 's', 'd',
+        'f', 'g', 'h', 'j', 'k', 'l', 'm', 'w', 'x', 'c', 'v', 'b', 'n',
+        'é', 'è', 'à', 'ç'
+      ]
+    },
+    {
+      "name": "Deutsch",
+      "keys": [
+        'q', 'w', 'e', 'r', 't', 'z', 'u', 'i', 'o', 'p', 'ü', 'a', 's',
+        'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ö', 'ä', 'y', 'x', 'c', 'v',
+        'b', 'n', 'm', 'ß'
+      ]
+    },
+    {
+      "name": "Español",
+      "keys": [
+        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd',
+        'f', 'g', 'h', 'j', 'k', 'l', 'ñ', 'z', 'x', 'c', 'v', 'b', 'n',
+        'm', 'á', 'é', 'í'
+      ]
+    },
+    {
+      "name": "Italiano",
+      "keys": [
+        'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'a', 's', 'd',
+        'f', 'g', 'h', 'j', 'k', 'l', 'ò', 'à', 'z', 'x', 'c', 'v', 'b',
+        'n', 'm', 'è', 'é', 'ì'
+      ]
+    },
   ];
-  @override Widget build(BuildContext context) {
+
+  @override
+  Widget build(BuildContext context) {
     List<String> currentKeys = languages[currentLang]["keys"];
-    return Container(color: isDark ? Color(0xFF0A1F3A) : Color(0xFFF5E6C8), padding: EdgeInsets.all(6), child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        IconButton(icon: Icon(Icons.keyboard_hide, color: isDark ? Colors.white : Colors.black), onPressed: onHide),
-        Expanded(child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(children: List.generate(languages.length, (index) { bool isSelected = index == currentLang; return GestureDetector(onTap: () => onChangeLang(index), child: Container(margin: EdgeInsets.symmetric(horizontal: 3), padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: isSelected ? (isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A)) : (isDark ? Color(0xFF132845) : Colors.white), borderRadius: BorderRadius.circular(15)), child: Text(languages[index]["name"], style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isSelected ? (isDark ? Color(0xFF0A1F3A) : Colors.white) : (isDark ? Colors.white70 : Colors.black54))),), ); }), ), ), ),
-        IconButton(icon: Icon(Icons.send, color: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A)), onPressed: onSend),
+    return Container(
+      color: isDark ? Color(0xFF0A1F3A) : Color(0xFFF5E6C8),
+      padding: EdgeInsets.all(6),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          IconButton(
+              icon: Icon(Icons.keyboard_hide,
+                  color: isDark ? Colors.white : Colors.black),
+              onPressed: onHide),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(languages.length, (index) {
+                  bool isSelected = index == currentLang;
+                  return GestureDetector(
+                    onTap: () => onChangeLang(index),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 3),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? (isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A))
+                            : (isDark ? Color(0xFF132845) : Colors.white),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        languages[index]["name"],
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected
+                              ? (isDark ? Color(0xFF0A1F3A) : Colors.white)
+                              : (isDark ? Colors.white70 : Colors.black54),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ),
+          IconButton(
+              icon: Icon(Icons.send,
+                  color: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A)),
+              onPressed: onSend),
+        ]),
+        SizedBox(height: 4),
+        Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          alignment: WrapAlignment.center,
+          children: [
+            ...currentKeys.map(
+              (k) => InkWell(
+                onTap: () => controller.text += k,
+                child: Container(
+                  width: 32,
+                  height: 42,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: isDark ? Color(0xFF132845) : Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(k,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black)),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                if (controller.text.isNotEmpty) {
+                  controller.text = controller.text
+                      .substring(0, controller.text.length - 1);
+                }
+              },
+              child: Container(
+                width: 60,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Color(0xFF9CA3AF),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Icon(Icons.backspace, size: 18),
+              ),
+            ),
+            InkWell(
+              onTap: () => controller.text += " ",
+              child: Container(
+                width: 150,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isDark ? Color(0xFF132845) : Colors.white,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Text("SPACE",
+                    style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black)),
+              ),
+            ),
+          ],
+        ),
       ]),
-      SizedBox(height: 4),
-      Wrap(spacing: 4, runSpacing: 4, alignment: WrapAlignment.center, children: [
-        ...currentKeys.map((k) => InkWell(onTap: () => controller.text += k, child: Container(width: 32, height: 42, alignment: Alignment.center, decoration: BoxDecoration(color: isDark ? Color(0xFF132845) : Colors.white, borderRadius: BorderRadius.circular(5)), child: Text(k, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black))), )),
-        InkWell(onTap: () { if(controller.text.isNotEmpty){ controller.text = controller.text.substring(0, controller.text.length - 1); } }, child: Container(width: 60, height: 42, alignment: Alignment.center, decoration: BoxDecoration(color: Color(0xFF9CA3AF), borderRadius: BorderRadius.circular(5)), child: Icon(Icons.backspace, size: 18))),
-        InkWell(onTap: () => controller.text += " ", child: Container(width: 150, height: 42, alignment: Alignment.center, decoration: BoxDecoration(color: isDark ? Color(0xFF132845) : Colors.white, borderRadius: BorderRadius.circular(5)), child: Text("SPACE", style: TextStyle(color: isDark ? Colors.white : Colors.black)))),
-      ]),
-    ]));
+    );
   }
 }
 
@@ -492,8 +498,10 @@ class KaiProfilePage extends StatefulWidget {
   final List<Msg> allMsgs;
   final bool isDarkMode;
   KaiProfilePage({required this.allMsgs, this.isDarkMode = false});
-  @override State<KaiProfilePage> createState() => _KaiProfilePageState();
+  @override
+  State<KaiProfilePage> createState() => _KaiProfilePageState();
 }
+
 class _KaiProfilePageState extends State<KaiProfilePage> {
   bool isBlocked = false;
   Future<void> pickImage() async {
@@ -501,33 +509,172 @@ class _KaiProfilePageState extends State<KaiProfilePage> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       final bytes = await image.readAsBytes();
-      setState(() { pickedImageBytes = bytes; });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr("saveGallery"))));
+      setState(() {
+        pickedImageBytes = bytes;
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(tr("saveGallery"))));
     }
   }
-  @override Widget build(BuildContext context) {
+
+  @override
+  Widget build(BuildContext context) {
     bool isDark = widget.isDarkMode;
     return Scaffold(
       backgroundColor: isDark ? Color(0xFF0A1F3A) : Color(0xFFF5E6C8),
-      appBar: AppBar(backgroundColor: Color(0xFF0A1F3A), elevation: 0, title: Text(tr("profile"), style: TextStyle(color: Colors.white))),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF0A1F3A),
+        elevation: 0,
+        title: Text(tr("profile"), style: TextStyle(color: Colors.white)),
+      ),
       body: ListView(children: [
         SizedBox(height: 20),
-        Center(child: Stack(children: [ GestureDetector(onTap: pickImage, child: CircleAvatar(radius: 60, backgroundImage: pickedImageBytes != null ? MemoryImage(pickedImageBytes!) : AssetImage(kaiImage) as ImageProvider)), Positioned(bottom: 0, right: 0, child: Container(width: 20, height: 20, decoration: BoxDecoration(color: Color(0xFF8BC34A), shape: BoxShape.circle, border: Border.all(color: isDark ? Color(0xFF0A1F3A) : Colors.white, width: 3))))])),
+        Center(
+          child: Stack(children: [
+            GestureDetector(
+              onTap: pickImage,
+              child: CircleAvatar(
+                radius: 60,
+                backgroundImage: pickedImageBytes != null
+                    ? MemoryImage(pickedImageBytes!)
+                    : AssetImage(kaiImage) as ImageProvider,
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Color(0xFF8BC34A),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: isDark ? Color(0xFF0A1F3A) : Colors.white,
+                      width: 3),
+                ),
+              ),
+            )
+          ]),
+        ),
         SizedBox(height: 8),
-        Center(child: Text(tr("tapToChange"), style: TextStyle(color: isDark ? Colors.white54 : Colors.black54, fontSize: 12))),
+        Center(
+          child: Text(tr("tapToChange"),
+              style: TextStyle(
+                  color: isDark ? Colors.white54 : Colors.black54,
+                  fontSize: 12)),
+        ),
         SizedBox(height: 12),
-        Center(child: Text(kaiName, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black))),
+        Center(
+          child: Text(kaiName,
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.black)),
+        ),
         SizedBox(height: 4),
         Center(child: Text(tr("online"), style: TextStyle(color: Colors.green))),
         Divider(height: 30, color: isDark ? Colors.white24 : Colors.black12),
-        ListTile(leading: Icon(Icons.person, color: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A)), title: Text(tr("editProfile"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), subtitle: Text("${tr("name")}: $kaiName", style: TextStyle(color: isDark ? Colors.white54 : Colors.black54)), onTap: () {
-          final ctrl = TextEditingController(text: kaiName);
-          showDialog(context: context, builder: (d) => AlertDialog(backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white, title: Text(tr("editProfile"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), content: TextField(controller: ctrl, style: TextStyle(color: isDark ? Colors.white : Colors.black), decoration: InputDecoration(labelText: tr("name"))), actions: [ TextButton(onPressed: () => Navigator.pop(d), child: Text(tr("cancel"))), TextButton(onPressed: () { setState(() { kaiName = ctrl.text; }); Navigator.pop(d); }, child: Text(tr("save"))), ]));
-        }),
-        ListTile(leading: Icon(Icons.photo, color: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A)), title: Text(tr("photo"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: () { Navigator.push(context, MaterialPageRoute(builder: (_) => MediaGalleryPage(allMsgs: widget.allMsgs))); }),
-        ListTile(leading: Icon(isBlocked ? Icons.lock_open : Icons.block, color: isBlocked ? Colors.green : Colors.red), title: Text(isBlocked ? tr("unblock") : tr("block"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: () { setState(() => isBlocked = !isBlocked); }),
-        ListTile(leading: Icon(Icons.delete, color: Colors.red), title: Text(tr("deleteChat"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: () { showDialog(context: context, builder: (d) => AlertDialog(backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white, title: Text(tr("deleteChat"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), actions: [ TextButton(onPressed: () => Navigator.pop(d), child: Text(tr("cancel"))), TextButton(onPressed: () { Navigator.pop(d); Navigator.pop(context, true); }, child: Text(tr("delete"), style: TextStyle(color: Colors.red))), ])); }),
-        ListTile(leading: Icon(Icons.report, color: Colors.orange), title: Text(tr("report"), style: TextStyle(color: isDark ? Colors.white : Colors.black)), onTap: () { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tr("reportSent")))); }),
+        ListTile(
+          leading: Icon(Icons.person,
+              color: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A)),
+          title: Text(tr("editProfile"),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+          subtitle: Text("${tr("name")}: $kaiName",
+              style: TextStyle(
+                  color: isDark ? Colors.white54 : Colors.black54)),
+          onTap: () {
+            final ctrl = TextEditingController(text: kaiName);
+            showDialog(
+              context: context,
+              builder: (d) => AlertDialog(
+                backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
+                title: Text(tr("editProfile"),
+                    style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black)),
+                content: TextField(
+                  controller: ctrl,
+                  style:
+                      TextStyle(color: isDark ? Colors.white : Colors.black),
+                  decoration: InputDecoration(labelText: tr("name")),
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(d),
+                      child: Text(tr("cancel"))),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        kaiName = ctrl.text;
+                      });
+                      Navigator.pop(d);
+                    },
+                    child: Text(tr("save")),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.photo,
+              color: isDark ? Color(0xFFF5E6C8) : Color(0xFF0A1F3A)),
+          title: Text(tr("photo"),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => MediaGalleryPage(allMsgs: widget.allMsgs)));
+          },
+        ),
+        ListTile(
+          leading: Icon(isBlocked ? Icons.lock_open : Icons.block,
+              color: isBlocked ? Colors.green : Colors.red),
+          title: Text(isBlocked ? tr("unblock") : tr("block"),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+          onTap: () {
+            setState(() => isBlocked = !isBlocked);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.delete, color: Colors.red),
+          title: Text(tr("deleteChat"),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (d) => AlertDialog(
+                backgroundColor: isDark ? Color(0xFF0A1F3A) : Colors.white,
+                title: Text(tr("deleteChat"),
+                    style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black)),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(d),
+                      child: Text(tr("cancel"))),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(d);
+                      Navigator.pop(context, true);
+                    },
+                    child:
+                        Text(tr("delete"), style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.report, color: Colors.orange),
+          title: Text(tr("report"),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+          onTap: () {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(tr("reportSent"))));
+          },
+        ),
       ]),
     );
   }
