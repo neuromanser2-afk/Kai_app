@@ -116,13 +116,27 @@ class _S extends State<ChatScreen> {
   bool isRecording = false;
   bool _isKaiTyping = false;
 
-  Future<void> pickRealImage() async { final XFile? file = await picker.pickImage(source: ImageSource.gallery); if(file != null){ send(Type.image, file.name, url: file.path); } }
-  Future<void> pickCamera() async { final XFile? file = await picker.pickImage(source: ImageSource.camera); if(file != null){ send(Type.video, file.name, url: file.path); } }
-  Future<void> pickRealFile() async {
-  final result = await FilePicker.platform.pickFiles();
-  if(result != null && result.files.isNotEmpty){
-    send(Type.file, result.files.first.name, url: result.files.first.path ?? '');
-  }
+  Future<void> pickRealImage() async { 
+  final XFile? file = await picker.pickImage(source: ImageSource.gallery); 
+  if(file != null){ 
+    send(Type.image, file.name, url: file.path); 
+  } 
+} 
+
+Future<void> pickCamera() async { 
+  final XFile? file = await picker.pickImage(source: ImageSource.camera); 
+  if(file != null){ 
+    send(Type.image, file.name, url: file.path); 
+  } 
+} 
+
+Future<void> pickRealFile() async { 
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.any,
+  ); 
+  if(result != null && result.files.isNotEmpty){ 
+    send(Type.file, result.files.first.name, url: result.files.first.path ?? ''); 
+  } 
 }
   Future<void> pickRealLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
